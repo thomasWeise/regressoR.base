@@ -8,7 +8,17 @@ regression.applyLearners(x, y, learners,
   representations = dataTransformeR::Transformation.applyDefault2D(x, y),
   metric = regressoR.quality::RegressionQualityMetric.default)
 }
+\arguments{
+\item{x}{the vector of \code{x} coordinates}
+
+\item{y}{the vector of \code{y} coordinates}
+
+\item{representations}{the list of data representations, or \code{NULL} if
+fitting should take place only on the raw data}
+
+\item{metric}{the metric generator function}
+}
 \description{
 Use the learnerSelectoR package to apply a set of learners to a
-  set of data representations and pick the approach which generalizes best.
+set of data representations and pick the approach which generalizes best.
 }

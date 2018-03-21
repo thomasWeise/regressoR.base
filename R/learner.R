@@ -74,7 +74,12 @@
 
 #' @title Apply a Set if Learners
 #' @description Use the learnerSelectoR package to apply a set of learners to a
-#'   set of data representations and pick the approach which generalizes best.
+#' set of data representations and pick the approach which generalizes best.
+#' @param x the vector of \code{x} coordinates
+#' @param y the vector of \code{y} coordinates
+#' @param representations the list of data representations, or \code{NULL} if
+#'   fitting should take place only on the raw data
+#' @param metric the metric generator function
 #' @importFrom dataTransformeR Transformation.applyDefault2D
 #' @importFrom regressoR.quality RegressionQualityMetric.default
 #' @export regression.applyLearners
@@ -185,7 +190,7 @@ regression.applyLearners <- function(x, y,
     } else {
       .s <- base::get(x="s", pos=.env, inherits=FALSE);
     }
-    .s <- base::force(s);
+    .s <- base::force(.s);
     return(.s);
   };
 
