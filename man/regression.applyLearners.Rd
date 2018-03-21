@@ -13,6 +13,8 @@ regression.applyLearners(x, y, learners,
 
 \item{y}{the vector of \code{y} coordinates}
 
+\item{learners}{the list of regression-based learner functions}
+
 \item{representations}{the list of data representations, or \code{NULL} if
 fitting should take place only on the raw data}
 

@@ -77,6 +77,7 @@
 #' set of data representations and pick the approach which generalizes best.
 #' @param x the vector of \code{x} coordinates
 #' @param y the vector of \code{y} coordinates
+#' @param learners the list of regression-based learner functions
 #' @param representations the list of data representations, or \code{NULL} if
 #'   fitting should take place only on the raw data
 #' @param metric the metric generator function
