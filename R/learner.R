@@ -15,12 +15,11 @@
   } else {
     learner.args <- base::formals(learner);
   }
-  if((base::length(learner.args) != 4L) ||
-     (!(base::identical(base::names(learner.args), base::c("metric",
-                                                           "transformation.x",
-                                                           "transformation.y",
-                                                           "metric.transformed"))))) {
-    base::stop("Learner function must have at exactly four arguments named 'metric', 'transformation.x', 'transformation.y', and 'metric.transformed'.");
+  if(!(base::identical(base::names(learner.args), base::c("metric",
+                                                          "transformation.x",
+                                                          "transformation.y",
+                                                          "metric.transformed")))) {
+    base::stop("Learner function must have exactly four arguments named 'metric', 'transformation.x', 'transformation.y', and 'metric.transformed'.");
   }
 
   learner.new <- function(data) learner(metric = data$metric,
@@ -65,37 +64,86 @@
 # Compute the test quality
 #' @importClassesFrom regressoR.quality RegressionQualityMetric
 .test.quality <- function(data, result) {
-  if(methods::is(result, "FittedModel") &&
-     methods::is(data, "RegressionQualityMetric")) {
+  if(methods::is(result, "FittedModel")) {
     return(data@quality(result@f));
   }
   return(+Inf);
 }
 
-#' @title Apply a Set if Learners
-#' @description Use the learnerSelectoR package to apply a set of learners to a
-#' set of data representations and pick the approach which generalizes best.
+#' @title Apply a Set of Regression Learners
+#' @description Use the \code{learnerSelectoR} package to apply a set of
+#' learners to a set of data representations and pick the approach which
+#' generalizes best.
+#'
+#' The data is represented by two vectors, \code{x} and \code{y}.
+#'
+#' Each learner must be function with exactly four arguments named
+#' \code{metric}, \code{transformation.x}, \code{transformation.y}, and
+#' \code{metric.transformed} Its parameter \code{metric} will be an instance of
+#' \code{\link{RegressionQualityMetric}} which guides the search on the actual,
+#' raw data. However, since we internally use the
+#' \code{\link{Transformation.applyDefault2D}} method from the
+#' \code{dataTransformeR} package by default to generate different
+#' representations of the raw data, each model fitting procedure may take place
+#' in two steps, first on a transformed representation of the data
+#' (\code{metric.transformed} based on \code{transformation.x} and
+#' \code{transformation.y}) and then the actual finalization fitting the actual
+#' \code{metric}.
+#'
+#' The \code{metricGenerator} is a function which accepts two vectors \code{x}
+#' and \code{y} and returns an instance of
+#' \code{\link{RegressionQualityMetric}}. It will be used to generate the
+#' quality metrics for guiding the model fitters. Since we internally use the
+#' \code{\link{learning.learn}} method from the \code{learnerSelectoR} package,
+#' the model may be chosen based on cross-validation and the metric generator is
+#' then also used to generate quality metrics for the training and test datasets
+#' used internally. If nothing else is specified, we use
+#' \code{\link{RegressionQualityMetric.default}} to generate the quality
+#' metrics.
+#'
+#' \code{representations} is a list of \code{\link{TransformedData2D}} instances
+#' providing alernative views on the data, or \code{NULL} if only the raw data
+#' should be concerned. By default, we use
+#' \code{\link{Transformation.applyDefault2D}} to get a set of representations
+#' if nothing else is specified.
+#'
 #' @param x the vector of \code{x} coordinates
 #' @param y the vector of \code{y} coordinates
 #' @param learners the list of regression-based learner functions
 #' @param representations the list of data representations, or \code{NULL} if
 #'   fitting should take place only on the raw data
-#' @param metric the metric generator function
+#' @param metricGenerator the metric generator function
 #' @importFrom dataTransformeR Transformation.applyDefault2D
 #' @importFrom regressoR.quality RegressionQualityMetric.default
+#' @importFrom learnerSelectoR learning.learn
 #' @export regression.applyLearners
 regression.applyLearners <- function(x, y,
                                      learners,
-                                     representations=dataTransformeR::Transformation.applyDefault2D(x, y),
-                                     metric=regressoR.quality::RegressionQualityMetric.default) {
+                                     representations=dataTransformeR::Transformation.applyDefault2D(x=x, y=y, addIdentity=TRUE),
+                                     metricGenerator=regressoR.quality::RegressionQualityMetric.default) {
 
+  # check the input data
   if(base::is.null(x) || base::is.null(y) ||
      (!(base::is.vector(x) && base::is.vector(y)))) {
     base::stop("x and y must be vectors.");
   }
   .data.size <- base::length(x);
-  if((.data.size<= 0L) || (.data.size != base::length(y))) {
-    base::stop("x and y must be vectors of same, non-zero length.");
+  if((.data.size <= 0L) || (.data.size != base::length(y))) {
+    base::stop("x and y must be vectors of the same, positive, non-zero length.");
+  }
+
+  # check the metric generator
+  if(base::is.null(metricGenerator) || (!(base::is.function(metricGenerator)))) {
+    stop("metricGenerator must be a function.");
+  }
+  # make sure the learner is a proper function
+  if(base::is.primitive(metricGenerator)) {
+    metricGenerator.args <- base::formals(base::args(metricGenerator));
+  } else {
+    metricGenerator.args <- base::formals(metricGenerator);
+  }
+  if(!(base::identical(base::names(metricGenerator.args), base::c("x", "y")))) {
+    stop("metricGenerator must be a function with exactly two arguments, 'x' and 'y'.")
   }
 
   # Check all learners.
@@ -156,7 +204,7 @@ regression.applyLearners <- function(x, y,
     if(!(base::identical(base::get(x="i", pos=.env, inherits=FALSE), index))) {
       # At the beginning of each iteration, first generate the 'raw' metric
       base::assign(x="i", value=index, pos=.env);
-      .r <- .make.selection(.data, selection, metricGenerator=metric, metric=NULL);
+      .r <- .make.selection(.data, selection, metricGenerator=metricGenerator, metric=NULL);
       .r <- base::force(.r);
       base::assign(x="r", value=.r, pos=.env);
     }
@@ -169,7 +217,7 @@ regression.applyLearners <- function(x, y,
       return(m);
     }
     # otherwise, create the selection
-    .r <- .make.selection(data, selection, metricGenerator=metric, metric=m$metric);
+    .r <- .make.selection(data, selection, metricGenerator=metricGenerator, metric=m$metric);
     base::force(.r);
     return(.r);
   }
@@ -185,7 +233,7 @@ regression.applyLearners <- function(x, y,
         .s <- dataTransformeR::TransformedData.select2D(data=.data, selection=selection);
       }
       .s <- base::force(.s);
-      .s <- metric(.s@x@data, .s@y@data);
+      .s <- metricGenerator(.s@x@data, .s@y@data);
       .s <- base::force(.s);
       base::assign(x="s", value=.s, pos=.env);
     } else {

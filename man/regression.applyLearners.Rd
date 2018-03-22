@@ -2,11 +2,12 @@
 % Please edit documentation in R/learner.R
 \name{regression.applyLearners}
 \alias{regression.applyLearners}
-\title{Apply a Set if Learners}
+\title{Apply a Set of Regression Learners}
 \usage{
 regression.applyLearners(x, y, learners,
-  representations = dataTransformeR::Transformation.applyDefault2D(x, y),
-  metric = regressoR.quality::RegressionQualityMetric.default)
+  representations = dataTransformeR::Transformation.applyDefault2D(x = x, y =
+  y, addIdentity = TRUE),
+  metricGenerator = regressoR.quality::RegressionQualityMetric.default)
 }
 \arguments{
 \item{x}{the vector of \code{x} coordinates}
@@ -18,9 +19,42 @@ regression.applyLearners(x, y, learners,
 \item{representations}{the list of data representations, or \code{NULL} if
 fitting should take place only on the raw data}
 
-\item{metric}{the metric generator function}
+\item{metricGenerator}{the metric generator function}
 }
 \description{
-Use the learnerSelectoR package to apply a set of learners to a
-set of data representations and pick the approach which generalizes best.
+Use the \code{learnerSelectoR} package to apply a set of
+learners to a set of data representations and pick the approach which
+generalizes best.
+
+The data is represented by two vectors, \code{x} and \code{y}.
+
+Each learner must be function with exactly four arguments named
+\code{metric}, \code{transformation.x}, \code{transformation.y}, and
+\code{metric.transformed} Its parameter \code{metric} will be an instance of
+\code{\link{RegressionQualityMetric}} which guides the search on the actual,
+raw data. However, since we internally use the
+\code{\link{Transformation.applyDefault2D}} method from the
+\code{dataTransformeR} package by default to generate different
+representations of the raw data, each model fitting procedure may take place
+in two steps, first on a transformed representation of the data
+(\code{metric.transformed} based on \code{transformation.x} and
+\code{transformation.y}) and then the actual finalization fitting the actual
+\code{metric}.
+
+The \code{metricGenerator} is a function which accepts two vectors \code{x}
+and \code{y} and returns an instance of
+\code{\link{RegressionQualityMetric}}. It will be used to generate the
+quality metrics for guiding the model fitters. Since we internally use the
+\code{\link{learning.learn}} method from the \code{learnerSelectoR} package,
+the model may be chosen based on cross-validation and the metric generator is
+then also used to generate quality metrics for the training and test datasets
+used internally. If nothing else is specified, we use
+\code{\link{RegressionQualityMetric.default}} to generate the quality
+metrics.
+
+\code{representations} is a list of \code{\link{TransformedData2D}} instances
+providing alernative views on the data, or \code{NULL} if only the raw data
+should be concerned. By default, we use
+\code{\link{Transformation.applyDefault2D}} to get a set of representations
+if nothing else is specified.
 }
