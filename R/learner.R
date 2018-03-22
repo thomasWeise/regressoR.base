@@ -88,7 +88,10 @@
 #' in two steps, first on a transformed representation of the data
 #' (\code{metric.transformed} based on \code{transformation.x} and
 #' \code{transformation.y}) and then the actual finalization fitting the actual
-#' \code{metric}.
+#' \code{metric}. A learner returns an instance of \code{\link{FittedModel}}
+#' which represents, well, the model it has fitted to its input data. Each
+#' learner thus represents the process of adapting a specific model to some
+#' data.
 #'
 #' The \code{metricGenerator} is a function which accepts two vectors \code{x}
 #' and \code{y} and returns an instance of
@@ -107,6 +110,10 @@
 #' \code{\link{Transformation.applyDefault2D}} to get a set of representations
 #' if nothing else is specified.
 #'
+#' The return value of this method will be an instance of
+#' \code{\link{FittedModel}} or \code{NULL} if no learner could produce any
+#' result.
+#'
 #' @param x the vector of \code{x} coordinates
 #' @param y the vector of \code{y} coordinates
 #' @param learners the list of regression-based learner functions
@@ -116,8 +123,8 @@
 #' @importFrom dataTransformeR Transformation.applyDefault2D
 #' @importFrom regressoR.quality RegressionQualityMetric.default
 #' @importFrom learnerSelectoR learning.learn
-#' @export regression.applyLearners
-regression.applyLearners <- function(x, y,
+#' @export regressoR.applyLearners
+regressoR.applyLearners <- function(x, y,
                                      learners,
                                      representations=dataTransformeR::Transformation.applyDefault2D(x=x, y=y, addIdentity=TRUE),
                                      metricGenerator=regressoR.quality::RegressionQualityMetric.default) {
