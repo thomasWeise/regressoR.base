@@ -4,29 +4,28 @@
 # the internal data structures.
 .prepare.learner <- function(learner) {
   # check the learner
-  learner <- base::force(learner);
-  if(base::is.null(learner) ||
-     (!(base::is.function(learner)))) {
-    base::stop("A learner must be a valid function.");
+  learner <- force(learner);
+  if(is.null(learner) || (!(is.function(learner)))) {
+    stop("A learner must be a valid function.");
   }
   # make sure the learner is a proper function
-  if(base::is.primitive(learner)) {
-    learner.args <- base::formals(base::args(learner));
+  if(is.primitive(learner)) {
+    learner.args <- formals(args(learner));
   } else {
-    learner.args <- base::formals(learner);
+    learner.args <- formals(learner);
   }
-  if(!(base::identical(base::names(learner.args), base::c("metric",
-                                                          "transformation.x",
-                                                          "transformation.y",
-                                                          "metric.transformed")))) {
-    base::stop("Learner function must have exactly four arguments named 'metric', 'transformation.x', 'transformation.y', and 'metric.transformed'.");
+  if(!(identical(names(learner.args), c("metric",
+                                        "transformation.x",
+                                        "transformation.y",
+                                        "metric.transformed")))) {
+    stop("Learner function must have exactly four arguments named 'metric', 'transformation.x', 'transformation.y', and 'metric.transformed'.");
   }
 
   learner.new <- function(data) learner(metric = data$metric,
                                         transformation.x = data$transformation.x,
                                         transformation.y = data$transformation.y,
                                         metric.transformed = data$metric.transformed);
-  learner.new <- base::force(learner.new);
+  learner.new <- force(learner.new);
   return(learner.new);
 }
 
@@ -36,28 +35,28 @@
 # ty the y transformation
 # tm the transformed metric
 .make.selection <- function(data, selection, metricGenerator, metric=NULL) {
-  if(base::is.null(selection)) {
+  if(is.null(selection)) {
     sel <- data;
   } else {
     sel <- dataTransformeR::TransformedData.select2D(data=data, selection=selection);
   }
-  sel <- base::force(sel);
+  sel <- force(sel);
   metric.transformed <- metricGenerator(sel@x@data, sel@y@data);
-  metric.transformed <- base::force(metric.transformed);
+  metric.transformed <- force(metric.transformed);
   transformation.x <- sel@x@transformation;
-  transformation.x <- base::force(transformation.x);
+  transformation.x <- force(transformation.x);
   transformation.y <- sel@y@transformation;
-  transformation.y <- base::force(transformation.y);
-  metric <- base::force(metric);
-  if(base::is.null(metric)) {
+  transformation.y <- force(transformation.y);
+  metric <- force(metric);
+  if(is.null(metric)) {
     metric <- metric.transformed;
   }
-  metric <- base::force(metric);
-  tuple <- base::list(metric=metric,
-                      transformation.x=transformation.x,
-                      transformation.y=transformation.y,
-                      metric.transformed=metric.transformed);
-  tuple <- base::force(tuple);
+  metric <- force(metric);
+  tuple <- list(metric=metric,
+                transformation.x=transformation.x,
+                transformation.y=transformation.y,
+                metric.transformed=metric.transformed);
+  tuple <- force(tuple);
   return(tuple);
 }
 
@@ -125,47 +124,47 @@
 #' @importFrom learnerSelectoR learning.learn
 #' @export regressoR.applyLearners
 regressoR.applyLearners <- function(x, y,
-                                     learners,
-                                     representations=dataTransformeR::Transformation.applyDefault2D(x=x, y=y, addIdentity=TRUE),
-                                     metricGenerator=regressoR.quality::RegressionQualityMetric.default) {
+                                    learners,
+                                    representations=dataTransformeR::Transformation.applyDefault2D(x=x, y=y, addIdentity=TRUE),
+                                    metricGenerator=regressoR.quality::RegressionQualityMetric.default) {
 
   # check the input data
-  if(base::is.null(x) || base::is.null(y) ||
-     (!(base::is.vector(x) && base::is.vector(y)))) {
-    base::stop("x and y must be vectors.");
+  if(is.null(x) || is.null(y) ||
+     (!(is.vector(x) && is.vector(y)))) {
+    stop("x and y must be vectors.");
   }
-  .data.size <- base::length(x);
-  if((.data.size <= 0L) || (.data.size != base::length(y))) {
-    base::stop("x and y must be vectors of the same, positive, non-zero length.");
+  .data.size <- length(x);
+  if((.data.size <= 0L) || (.data.size != length(y))) {
+    stop("x and y must be vectors of the same, positive, non-zero length.");
   }
 
   # check the metric generator
-  if(base::is.null(metricGenerator) || (!(base::is.function(metricGenerator)))) {
+  if(is.null(metricGenerator) || (!(is.function(metricGenerator)))) {
     stop("metricGenerator must be a function.");
   }
   # make sure the learner is a proper function
-  if(base::is.primitive(metricGenerator)) {
-    metricGenerator.args <- base::formals(base::args(metricGenerator));
+  if(is.primitive(metricGenerator)) {
+    metricGenerator.args <- formals(args(metricGenerator));
   } else {
-    metricGenerator.args <- base::formals(metricGenerator);
+    metricGenerator.args <- formals(metricGenerator);
   }
-  if(!(base::identical(base::names(metricGenerator.args), base::c("x", "y")))) {
+  if(!(identical(names(metricGenerator.args), c("x", "y")))) {
     stop("metricGenerator must be a function with exactly two arguments, 'x' and 'y'.")
   }
 
   # Check all learners.
-  learners <- base::force(learners);
-  learners <- base::lapply(X = learners, FUN = .prepare.learner);
-  learners <- base::force(learners);
+  learners <- force(learners);
+  learners <- lapply(X = learners, FUN = .prepare.learner);
+  learners <- force(learners);
 
   # Now prepare the .data.
   .data <- NULL;
 
   # check the representations
-  if(!(base::is.null(representations))) {
-    if(base::is.list(representations)) {
+  if(!(is.null(representations))) {
+    if(is.list(representations)) {
       # OK, it did return a list
-      if(base::length(representations) <= 0L) {
+      if(length(representations) <= 0L) {
         # but the list is empty
         representations <- NULL;
       } else {
@@ -179,74 +178,74 @@ regressoR.applyLearners <- function(x, y,
               break;
             }
           } else {
-            base::stop("All representations must be instances of TransformedData2D.");
+            stop("All representations must be instances of TransformedData2D.");
           }
         }
       }
     } else {
-      base::stop("'representations' must be a list.")
+      stop("'representations' must be a list.")
     }
   }
 
-  if(base::is.null(.data)) {
+  if(is.null(.data)) {
     # We did not have a raw .data record.
     .data <- dataTransformeR::Transformation.identity2D(x, y);
   }
 
-  if(base::is.null(representations)) {
+  if(is.null(representations)) {
     # No representations yet? OK, let's create one.
-    representations <- base::list(.data);
+    representations <- list(.data);
   }
 
-  .env <- base::new.env();
-  base::assign(x="i", value=NULL, pos=.env);
-  base::assign(x="r", value=NULL, pos=.env);
-  base::assign(x="j", value=NULL, pos=.env);
-  base::assign(x="s", value=NULL, pos=.env);
+  .env <- new.env();
+  assign(x="i", value=NULL, pos=.env);
+  assign(x="r", value=NULL, pos=.env);
+  assign(x="j", value=NULL, pos=.env);
+  assign(x="s", value=NULL, pos=.env);
 
   # Now we have data and representations, we are ready to do the learning.
   .selector <- function(data, selection, index) {
 
     # if we just start the iteration, first compute the true metric
-    if(!(base::identical(base::get(x="i", pos=.env, inherits=FALSE), index))) {
+    if(!(identical(get(x="i", pos=.env, inherits=FALSE), index))) {
       # At the beginning of each iteration, first generate the 'raw' metric
-      base::assign(x="i", value=index, pos=.env);
+      assign(x="i", value=index, pos=.env);
       .r <- .make.selection(.data, selection, metricGenerator=metricGenerator, metric=NULL);
-      .r <- base::force(.r);
-      base::assign(x="r", value=.r, pos=.env);
+      .r <- force(.r);
+      assign(x="r", value=.r, pos=.env);
     }
 
     # Now extract the original metric
-    m <- base::get(x="r", pos=.env, inherits=FALSE);
-    m <- base::force(m);
-    if(base::identical(data, .data)) {
+    m <- get(x="r", pos=.env, inherits=FALSE);
+    m <- force(m);
+    if(identical(data, .data)) {
       # if the data is the same as the original data, use the raw metric
       return(m);
     }
     # otherwise, create the selection
     .r <- .make.selection(data, selection, metricGenerator=metricGenerator, metric=m$metric);
-    base::force(.r);
+    force(.r);
     return(.r);
   }
 
   # Now we have data and representations, we are ready to do the learning.
   .test.selector <- function(data, selection, index) {
-    if(!(base::identical(base::get(x="j", pos=.env, inherits=FALSE), index))) {
+    if(!(identical(get(x="j", pos=.env, inherits=FALSE), index))) {
       # At the beginning of each iteration, first generate the 'raw' metric
-      base::assign(x="j", value=index, pos=.env);
-      if(base::is.null(selection)) {
+      assign(x="j", value=index, pos=.env);
+      if(is.null(selection)) {
         .s <- .data;
       } else {
         .s <- dataTransformeR::TransformedData.select2D(data=.data, selection=selection);
       }
-      .s <- base::force(.s);
+      .s <- force(.s);
       .s <- metricGenerator(.s@x@data, .s@y@data);
-      .s <- base::force(.s);
-      base::assign(x="s", value=.s, pos=.env);
+      .s <- force(.s);
+      assign(x="s", value=.s, pos=.env);
     } else {
-      .s <- base::get(x="s", pos=.env, inherits=FALSE);
+      .s <- get(x="s", pos=.env, inherits=FALSE);
     }
-    .s <- base::force(.s);
+    .s <- force(.s);
     return(.s);
   };
 
