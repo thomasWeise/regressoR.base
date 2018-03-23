@@ -13,15 +13,15 @@ FittedModel <- methods::setClass(
   contains = "learning.Result",
   representation = methods::representation(f="function"),
   validity = function(object) {
-    if(base::is.null(object@f) || (!(base::is.function(object@f)))) {
+    if(is.null(object@f) || (!(is.function(object@f)))) {
       return("The model must be a proper non-null function.");
     }
-    if(base::is.primitive(object@f)) {
-      f.args <- base::formals(base::args(object@f));
+    if(is.primitive(object@f)) {
+      f.args <- formals(args(object@f));
     } else {
-      f.args <- base::formals(object@f);
+      f.args <- formals(object@f);
     }
-    if ((base::length(f.args) != 1L) || (!(base::identical(base::names(f.args), base::c("x"))))) {
+    if ((length(f.args) != 1L) || (!(identical(names(f.args), c("x"))))) {
       return("Model function must take exactly one arguments named 'x'.");
     }
     return(TRUE);
@@ -40,11 +40,11 @@ FittedModel <- methods::setClass(
 #' @export FittedModel.new
 FittedModel.new <- function(f, quality, size) {
   result <- methods::new("FittedModel", f=f, quality=quality, size=size);
-  result <- base::force(result);
-  result@f <- base::force(result@f);
-  result@quality <- base::force(result@quality);
-  result@size <- base::force(result@size);
-  result <- base::force(result);
+  result <- force(result);
+  result@f <- force(result@f);
+  result@quality <- force(result@quality);
+  result@size <- force(result@size);
+  result <- force(result);
   methods::validObject(result);
   return(result);
 }
