@@ -38,7 +38,7 @@
   if(is.null(selection)) {
     sel <- data;
   } else {
-    sel <- dataTransformeR::TransformedData.select2D(data=data, selection=selection);
+    sel <- TransformedData.select2D(data=data, selection=selection);
   }
   sel <- force(sel);
   metric.transformed <- metricGenerator(sel@x@data, sel@y@data);
@@ -125,8 +125,8 @@
 #' @export regressoR.applyLearners
 regressoR.applyLearners <- function(x, y,
                                     learners,
-                                    representations=dataTransformeR::Transformation.applyDefault2D(x=x, y=y, addIdentity=TRUE),
-                                    metricGenerator=regressoR.quality::RegressionQualityMetric.default) {
+                                    representations=Transformation.applyDefault2D(x=x, y=y, addIdentity=TRUE),
+                                    metricGenerator=RegressionQualityMetric.default) {
 
   # check the input data
   if(is.null(x) || is.null(y) ||
@@ -189,7 +189,7 @@ regressoR.applyLearners <- function(x, y,
 
   if(is.null(.data)) {
     # We did not have a raw .data record.
-    .data <- dataTransformeR::Transformation.identity2D(x, y);
+    .data <- Transformation.identity2D(x, y);
   }
 
   if(is.null(representations)) {
@@ -236,7 +236,7 @@ regressoR.applyLearners <- function(x, y,
       if(is.null(selection)) {
         .s <- .data;
       } else {
-        .s <- dataTransformeR::TransformedData.select2D(data=.data, selection=selection);
+        .s <- TransformedData.select2D(data=.data, selection=selection);
       }
       .s <- force(.s);
       .s <- metricGenerator(.s@x@data, .s@y@data);

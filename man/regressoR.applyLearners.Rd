@@ -5,9 +5,8 @@
 \title{Apply a Set of Regression Learners}
 \usage{
 regressoR.applyLearners(x, y, learners,
-  representations = dataTransformeR::Transformation.applyDefault2D(x = x, y =
-  y, addIdentity = TRUE),
-  metricGenerator = regressoR.quality::RegressionQualityMetric.default)
+  representations = Transformation.applyDefault2D(x = x, y = y, addIdentity =
+  TRUE), metricGenerator = RegressionQualityMetric.default)
 }
 \arguments{
 \item{x}{the vector of \code{x} coordinates}

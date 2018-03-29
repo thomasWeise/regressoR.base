@@ -8,10 +8,10 @@
 #' @exportClass FittedModel
 #' @importFrom methods setClass representation
 #' @importClassesFrom learnerSelectoR learning.Result
-FittedModel <- methods::setClass(
+FittedModel <- setClass(
   Class = "FittedModel",
   contains = "learning.Result",
-  representation = methods::representation(f="function"),
+  representation = representation(f="function"),
   validity = function(object) {
     if(is.null(object@f) || (!(is.function(object@f)))) {
       return("The model must be a proper non-null function.");
@@ -39,13 +39,13 @@ FittedModel <- methods::setClass(
 #' @importFrom methods new validObject
 #' @export FittedModel.new
 FittedModel.new <- function(f, quality, size) {
-  result <- methods::new("FittedModel", f=f, quality=quality, size=size);
+  result <- new("FittedModel", f=f, quality=quality, size=size);
   result <- force(result);
   result@f <- force(result@f);
   result@quality <- force(result@quality);
   result@size <- force(result@size);
   result <- force(result);
-  methods::validObject(result);
+  validObject(result);
   return(result);
 }
 
