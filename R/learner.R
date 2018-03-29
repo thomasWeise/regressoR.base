@@ -34,6 +34,7 @@
 # tx the x transformation
 # ty the y transformation
 # tm the transformed metric
+#' @importFrom dataTransformeR TransformedData.select2D
 .make.selection <- function(data, selection, metricGenerator, metric=NULL) {
   if(is.null(selection)) {
     sel <- data;
@@ -119,7 +120,7 @@
 #' @param representations the list of data representations, or \code{NULL} if
 #'   fitting should take place only on the raw data
 #' @param metricGenerator the metric generator function
-#' @importFrom dataTransformeR Transformation.applyDefault2D
+#' @importFrom dataTransformeR Transformation.applyDefault2D Transformation.identity2D
 #' @importFrom regressoR.quality RegressionQualityMetric.default
 #' @importFrom learnerSelectoR learning.learn
 #' @export regressoR.applyLearners
