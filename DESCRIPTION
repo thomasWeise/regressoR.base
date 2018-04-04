@@ -13,8 +13,8 @@ URL: http://www.github.com/thomasWeise/regressoR.base
 BugReports: http://www.github.com/thomasWeise/regressoR.base/issues
 Imports: learnerSelectoR (>= 0.8.5),
          methods (>= 3.3.2),
-         dataTransformeR (>= 0.8.8),
-         regressoR.quality (>= 0.8.3)
+         dataTransformeR (>= 0.8.9),
+         regressoR.quality (>= 0.8.4)
 Suggests: testthat (>= 2.0.0),
           roxygen2 (>= 6.0.1)
 Remotes: github::thomasWeise/dataTransformeR,
