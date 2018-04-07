@@ -4,7 +4,7 @@ context("regressoR.applyLearners")
 test_that("Test regressoR.applyLearners plain call",{
   expect_identical(
     regressoR.applyLearners(x=c(1,2), y=c(1,2),
-                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed) NULL)),
+                            learners=list(function(metric, transformation.x, transformation.y, metric.transformed, q) NULL)),
     NULL);
 })
 
@@ -12,13 +12,13 @@ test_that("Test regressoR.applyLearners errors",{
   expect_error(regressoR.applyLearners());
   expect_error(regressoR.applyLearners(x=c(1,2), y=c(1,2)));
   expect_error(regressoR.applyLearners(x=c(1,2), y=c(1,2),
-                                        learners=list(function(metric, transformation.x, transformation.y) NULL)));
+                                        learners=list(function(metric, transformation.x, transformation.y, q) NULL)));
   expect_error(
     regressoR.applyLearners(x=c(1,2), y=c(1),
-                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed) NULL)));
+                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed, q) NULL)));
   expect_error(
     regressoR.applyLearners(x=c(1,2), y=c(1,2),
-                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed) NULL),
+                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed, q) NULL),
                              metricGenerator = NULL));
 })
 
@@ -31,22 +31,22 @@ test_that("Test regressoR.applyLearners with result",{
 
   expect_identical(
     regressoR.applyLearners(x=c(1), y=c(1),
-                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed) instance)),
+                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed, q) instance)),
     instance);
 
   expect_identical(
     regressoR.applyLearners(x=c(1,2), y=c(1,2),
-                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed) instance)),
+                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed, q) instance)),
     instance);
 
   expect_identical(
     regressoR.applyLearners(x=c(1, 2, 3), y=c(1, 2, 3),
-                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed) instance)),
+                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed, q) instance)),
     instance);
 
   expect_identical(
     regressoR.applyLearners(x=c(1, 2, 3, 4), y=c(1, 2, 3, 4),
-                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed) instance)),
+                             learners=list(function(metric, transformation.x, transformation.y, metric.transformed, q) instance)),
     instance);
 })
 
@@ -66,8 +66,8 @@ test_that("Test regressoR.applyLearners with multiple result",{
   expect_identical(
     regressoR.applyLearners(x=c(1,2,3,4,5), y=c(1,2,3,4,5), # <- the data fits to the first learner
                              learners=list(
-                             function(metric, transformation.x, transformation.y, metric.transformed) instance.1,
-                             function(metric, transformation.x, transformation.y, metric.transformed) instance.2
+                             function(metric, transformation.x, transformation.y, metric.transformed, q) instance.1,
+                             function(metric, transformation.x, transformation.y, metric.transformed, q) instance.2
                              )),
     instance.1);
 
@@ -75,8 +75,8 @@ test_that("Test regressoR.applyLearners with multiple result",{
   expect_identical(
     regressoR.applyLearners(x=c(1,2,3,4,5), y=c(2,3,4,5,6), # <- the data fits better to the second learner
                              learners=list(
-                               function(metric, transformation.x, transformation.y, metric.transformed) instance.1,
-                               function(metric, transformation.x, transformation.y, metric.transformed) instance.2
+                               function(metric, transformation.x, transformation.y, metric.transformed, q) instance.1,
+                               function(metric, transformation.x, transformation.y, metric.transformed, q) instance.2
                              )),
     instance.2);
 })
@@ -111,11 +111,11 @@ test_that("Test regressoR.applyLearners with multiple result",{
 
 
   ls <- list(
-    function(metric, transformation.x, transformation.y, metric.transformed) instance.1,
-    function(metric, transformation.x, transformation.y, metric.transformed) instance.2,
-    function(metric, transformation.x, transformation.y, metric.transformed) instance.3,
-    function(metric, transformation.x, transformation.y, metric.transformed) instance.4,
-    function(metric, transformation.x, transformation.y, metric.transformed) instance.5
+    function(metric, transformation.x, transformation.y, metric.transformed, q) instance.1,
+    function(metric, transformation.x, transformation.y, metric.transformed, q) instance.2,
+    function(metric, transformation.x, transformation.y, metric.transformed, q) instance.3,
+    function(metric, transformation.x, transformation.y, metric.transformed, q) instance.4,
+    function(metric, transformation.x, transformation.y, metric.transformed, q) instance.5
   );
 
   expect_identical(

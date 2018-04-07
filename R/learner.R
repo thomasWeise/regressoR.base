@@ -17,14 +17,17 @@
   if(!(identical(names(learner.args), c("metric",
                                         "transformation.x",
                                         "transformation.y",
-                                        "metric.transformed")))) {
-    stop("Learner function must have exactly four arguments named 'metric', 'transformation.x', 'transformation.y', and 'metric.transformed'.");
+                                        "metric.transformed",
+                                        "q")))) {
+    stop("Learner function must have exactly five arguments named 'metric', 'transformation.x', 'transformation.y', 'metric.transformed', and 'q'.");
   }
 
-  learner.new <- function(data) learner(metric = data$metric,
-                                        transformation.x = data$transformation.x,
-                                        transformation.y = data$transformation.y,
-                                        metric.transformed = data$metric.transformed);
+  learner.new <- function(data, q)
+                       learner(metric = data$metric,
+                               transformation.x = data$transformation.x,
+                               transformation.y = data$transformation.y,
+                               metric.transformed = data$metric.transformed,
+                               q = q);
   learner.new <- force(learner.new);
   return(learner.new);
 }
@@ -120,6 +123,8 @@
 #' @param representations the list of data representations, or \code{NULL} if
 #'   fitting should take place only on the raw data
 #' @param metricGenerator the metric generator function
+#' @param q the effort to be spent on learning: 0 is minimal (potentially
+#'   fast/poor quality), 1 is maximal (potentially slow/high quality)
 #' @importFrom dataTransformeR Transformation.applyDefault2D Transformation.identity2D
 #' @importFrom regressoR.quality RegressionQualityMetric.default
 #' @importFrom learnerSelectoR learning.learn
@@ -127,7 +132,8 @@
 regressoR.applyLearners <- function(x, y,
                                     learners,
                                     representations=Transformation.applyDefault2D(x=x, y=y, addIdentity=TRUE),
-                                    metricGenerator=RegressionQualityMetric.default) {
+                                    metricGenerator=RegressionQualityMetric.default,
+                                    q=0.75) {
 
   # check the input data
   if(is.null(x) || is.null(y) ||
@@ -256,5 +262,6 @@ regressoR.applyLearners <- function(x, y,
                                          test.quality = .test.quality,
                                          selector = .selector,
                                          representations = representations,
-                                         test.selector = .test.selector));
+                                         test.selector = .test.selector,
+                                         q = q));
 }

@@ -6,7 +6,7 @@
 \usage{
 regressoR.applyLearners(x, y, learners,
   representations = Transformation.applyDefault2D(x = x, y = y, addIdentity =
-  TRUE), metricGenerator = RegressionQualityMetric.default)
+  TRUE), metricGenerator = RegressionQualityMetric.default, q = 0.75)
 }
 \arguments{
 \item{x}{the vector of \code{x} coordinates}
@@ -19,6 +19,9 @@ regressoR.applyLearners(x, y, learners,
 fitting should take place only on the raw data}
 
 \item{metricGenerator}{the metric generator function}
+
+\item{q}{the effort to be spent on learning: 0 is minimal (potentially
+fast/poor quality), 1 is maximal (potentially slow/high quality)}
 }
 \description{
 Use the \code{learnerSelectoR} package to apply a set of

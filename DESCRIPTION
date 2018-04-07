@@ -1,7 +1,7 @@
 Package: regressoR.base
 Type: Package
-Title: An R Base Package with Shared Utilities for Regression 
-Version: 0.8.3
+Title: An R Package with Shared Utilities for Regression 
+Version: 0.8.4
 Author: Dr. Thomas Weise <tweise@hfuu.edu.cn>
 Maintainer: Dr. Thomas Weise <tweise@hfuu.edu.cn>
 Description: A package with classes and utilities shared by all
@@ -11,7 +11,7 @@ Encoding: UTF-8
 LazyData: true
 URL: http://www.github.com/thomasWeise/regressoR.base
 BugReports: http://www.github.com/thomasWeise/regressoR.base/issues
-Imports: learnerSelectoR (>= 0.8.5),
+Imports: learnerSelectoR (>= 0.8.6),
          methods (>= 3.3.2),
          dataTransformeR (>= 0.8.9),
          regressoR.quality (>= 0.8.4)
