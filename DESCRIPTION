@@ -13,7 +13,7 @@ URL: http://www.github.com/thomasWeise/regressoR.base
 BugReports: http://www.github.com/thomasWeise/regressoR.base/issues
 Imports: learnerSelectoR (>= 0.8.6),
          methods (>= 3.3.2),
-         dataTransformeR (>= 0.8.9),
+         dataTransformeR (>= 0.8.10),
          regressoR.quality (>= 0.8.4)
 Suggests: testthat (>= 2.0.0),
           roxygen2 (>= 6.0.1)
@@ -23,4 +23,5 @@ Remotes: github::thomasWeise/dataTransformeR,
 Collate: 
     'FittedModel.R'
     'learner.R'
+    'protect.R'
 RoxygenNote: 6.0.1.9000
