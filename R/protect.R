@@ -123,9 +123,16 @@ model.protect <- function(f, x, y) {
     # in this case, we just linearly extrapolate to get a finite result
     return(x.min.y + ((x.max.y - x.min.y) * (x - x.min) / (x.max - x.min)));
   }
-
   f.ret <- force(f.ret);
-  return(f.ret);
+
+  # finally, we vectorize the function properly
+  final <- function(x) {
+    if(length(x) == 1L) f.ret(x)
+    else vapply(X=x, FUN=f.ret, FUN.VALUE = NaN);
+  }
+
+  final <- force(final);
+  return(final);
 }
 
 # try to find a finite approximation, by stepping from x2 towards x1
