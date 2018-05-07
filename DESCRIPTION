@@ -17,6 +17,7 @@ Imports: learnerSelectoR (>= 0.8.6),
          regressoR.quality (>= 0.8.4)
 Suggests: testthat (>= 2.0.0),
           roxygen2 (>= 6.0.1)
+Depends: R (>= 3.3.0)
 Remotes: github::thomasWeise/dataTransformeR,
          github::thomasWeise/learnerSelectoR,
          github::thomasWeise/regressoR.quality
