@@ -1,7 +1,7 @@
 Package: regressoR.base
 Type: Package
 Title: An R Package with Shared Utilities for Regression 
-Version: 0.8.5
+Version: 0.8.6
 Author: Dr. Thomas Weise <tweise@hfuu.edu.cn>
 Maintainer: Dr. Thomas Weise <tweise@hfuu.edu.cn>
 Description: A package with classes and utilities shared by all
@@ -14,13 +14,15 @@ BugReports: http://www.github.com/thomasWeise/regressoR.base/issues
 Imports: learnerSelectoR (>= 0.8.6),
          methods (>= 3.3.2),
          dataTransformeR (>= 0.8.10),
-         regressoR.quality (>= 0.8.4)
+         regressoR.quality (>= 0.8.4),
+         utilizeR (>= 0.8.3)
 Suggests: testthat (>= 2.0.0),
           roxygen2 (>= 6.0.1)
 Depends: R (>= 3.3.0)
 Remotes: github::thomasWeise/dataTransformeR,
          github::thomasWeise/learnerSelectoR,
-         github::thomasWeise/regressoR.quality
+         github::thomasWeise/regressoR.quality,
+         github::thomasWeise/utilizeR
 Collate: 
     'FittedModel.R'
     'learner.R'

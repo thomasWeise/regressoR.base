@@ -49,3 +49,20 @@ FittedModel.new <- function(f, quality, size) {
   return(result);
 }
 
+#' @title Convert a \code{FittedModel} to a String
+#' @description well, convert a \code{FittedModel} to a String
+#' @param x the \code{FittedModel}
+#' @return the string
+#' @importFrom utilizeR functionToString
+#' @export FittedModel.as.character
+FittedModel.as.character <- function(x) functionToString(x@f)
+
+#' @title Convert a \code{\link{FittedModel}} to a String
+#' @description the \code{as.character} implementation for
+#'   \code{\link{FittedModel}}
+#' @param x the object
+#' @return the name of the object
+#' @importFrom methods setMethod
+#' @name as.character
+#' @aliases as.character,FittedModel-method
+methods::setMethod("as.character", "FittedModel", FittedModel.as.character)

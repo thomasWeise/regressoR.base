@@ -10,6 +10,10 @@ test_that("Test FittedModel constructor", {
   expect_identical(instance@quality, quality);
   expect_identical(instance@f, f);
   expect_identical(instance@size, size);
+
+  str <- as.character(instance);
+  expect_gt(nchar(str), 0);
+  expect_identical(str, FittedModel.as.character(instance));
 })
 
 test_that("Test FittedModel constructor error", {
@@ -50,6 +54,10 @@ test_that("Test FittedModel.new", {
   expect_identical(instance@quality, quality);
   expect_identical(instance@f, f);
   expect_identical(instance@size, size);
+
+  str <- as.character(instance);
+  expect_gt(nchar(str), 0);
+  expect_identical(str, FittedModel.as.character(instance));
 })
 
 test_that("Test FittedModel.new error", {
