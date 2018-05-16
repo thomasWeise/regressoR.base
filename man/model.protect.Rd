@@ -20,15 +20,17 @@ a new model function which can be as drop-in replacement for \code{f}
   yield non-finite results.
 }
 \description{
-This function can protect a model which was trained on a certain metric
-against non-finite results. The idea is that we use the model directly for any
-situation where the results are finite. When they are not finite, we try to extrapolate
-the model values linearly between the two closest finite results. If we fail in
-doing so, we simply extrapolate results from the \code{x-y} data directly.
+This function can protect a model which was trained on a certain
+  metric against non-finite results. The idea is that we use the model
+  directly for any situation where the results are finite. When they are not
+  finite, we try to extrapolate the model values linearly between the two
+  closest finite results. If we fail in doing so, we simply extrapolate
+  results from the \code{x-y} data directly.
 
-Using protected models may be useful if a model function \code{f} includes,
-e.g., a log-scaled \code{x}-axis and is fed with an x-coordinate where the
-log would receive a zero or negative parameter.
+  Using protected models may be useful if a model function \code{f} includes,
+  e.g., a log-scaled \code{x}-axis and is fed with an x-coordinate where the
+  log would receive a zero or negative parameter.
 
-\emph{Notice:} This function and using the produced model may lead to many warnings.
+  \emph{Notice:} This function and using the produced model may lead to many
+  warnings.
 }

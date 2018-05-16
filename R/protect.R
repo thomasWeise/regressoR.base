@@ -1,17 +1,19 @@
 
 #' @title Protected a Fitted Model from Producing Non-Finite Results
 #'
-#' @description This function can protect a model which was trained on a certain metric
-#' against non-finite results. The idea is that we use the model directly for any
-#' situation where the results are finite. When they are not finite, we try to extrapolate
-#' the model values linearly between the two closest finite results. If we fail in
-#' doing so, we simply extrapolate results from the \code{x-y} data directly.
+#' @description This function can protect a model which was trained on a certain
+#'   metric against non-finite results. The idea is that we use the model
+#'   directly for any situation where the results are finite. When they are not
+#'   finite, we try to extrapolate the model values linearly between the two
+#'   closest finite results. If we fail in doing so, we simply extrapolate
+#'   results from the \code{x-y} data directly.
 #'
-#' Using protected models may be useful if a model function \code{f} includes,
-#' e.g., a log-scaled \code{x}-axis and is fed with an x-coordinate where the
-#' log would receive a zero or negative parameter.
+#'   Using protected models may be useful if a model function \code{f} includes,
+#'   e.g., a log-scaled \code{x}-axis and is fed with an x-coordinate where the
+#'   log would receive a zero or negative parameter.
 #'
-#' \emph{Notice:} This function and using the produced model may lead to many warnings.
+#'   \emph{Notice:} This function and using the produced model may lead to many
+#'   warnings.
 #'
 #' @param f the trained model
 #' @param x the \code{x} coordinates on which the model was trained
@@ -21,6 +23,7 @@
 #'   has finite results \emph{and} finite output results where \code{f} does
 #'   yield non-finite results.
 #' @export model.protect
+#' @importFrom utilizeR find.finite
 model.protect <- function(f, x, y) {
 
   # first, we want to get the minimum and maximum x coordinates and their
@@ -61,7 +64,7 @@ model.protect <- function(f, x, y) {
     if(x <= x.min) {
       # we are before the start.
       # let us see how far we can go there coming from x.min
-      res <- .bin.search.finite(x, x.min, f)[2L];
+      res <- find.finite(x, x.min, f)[2L];
       if(is.finite(res)) {
         # ok, we could make some progress, so we use the approximation
         return(res);
@@ -75,7 +78,7 @@ model.protect <- function(f, x, y) {
     if(x >= x.max) {
       # we are after the end
       # let us see how far we can go there coming from x.max
-      res <- .bin.search.finite(x, x.max, f)[2L];
+      res <- find.finite(x, x.max, f)[2L];
       if(is.finite(res)) {
         # ok, we could make some progress, so we use the approximation
         return(res);
@@ -90,7 +93,7 @@ model.protect <- function(f, x, y) {
     # so we try to approach the dangerous value from both ends
 
     # first from the left end
-    res.1 <- .bin.search.finite(x, x.min, f);
+    res.1 <- find.finite(x, x.min, f);
     if(is.finite(res.1[2L])){
       # if we could make some progress on the left side, we use the
       # extrapolation
@@ -103,7 +106,7 @@ model.protect <- function(f, x, y) {
     }
 
     # now we do the same coming from the right
-    res.2 <- .bin.search.finite(x, x.max, f);
+    res.2 <- find.finite(x, x.max, f);
     if(is.finite(res.2[2L])){
       # ok, we could make some approximation and can use it
       x.2 <- res.2[1L];
@@ -133,24 +136,4 @@ model.protect <- function(f, x, y) {
 
   final <- force(final);
   return(final);
-}
-
-# try to find a finite approximation, by stepping from x2 towards x1
-.bin.search.finite <- function(x1, x2, f) {
-  ry <- NaN;
-  rx <- x2;
-  for(i in 1L:64L) {
-    if(x1 == x2) { return(r); }
-    xt <- 0.5*(x1 + x2);
-    yt <- f(xt);
-    if(is.finite(yt)) {
-      ry <- yt;
-      rx <- xt;
-      x2 <- xt; # we can step left
-    } else {
-      x1 <- xt; # we need to step right
-    }
-  }
-
-  return(c(rx, ry)); # return result
 }
