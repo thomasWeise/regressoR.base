@@ -67,7 +67,7 @@
 # Compute the test quality
 #' @importClassesFrom regressoR.quality RegressionQualityMetric
 .test.quality <- function(data, result) {
-  if(methods::is(result, "FittedModel")) {
+  if(is(result, "FittedModel")) {
     return(data@quality(result@f));
   }
   return(+Inf);
@@ -128,6 +128,7 @@
 #' @importFrom dataTransformeR Transformation.applyDefault2D Transformation.identity2D
 #' @importFrom regressoR.quality RegressionQualityMetric.default
 #' @importFrom learnerSelectoR learning.learn
+#' @importFrom methods is
 #' @export regressoR.applyLearners
 regressoR.applyLearners <- function(x, y,
                                     learners,
@@ -177,7 +178,7 @@ regressoR.applyLearners <- function(x, y,
       } else {
         # the list is not empty, so we can
         for(representation in representations) {
-          if(methods::is(representation, "TransformedData2D")) {
+          if(is(representation, "TransformedData2D")) {
             if( (representation@x@transformation@complexity <= 0L) &&
                 (representation@y@transformation@complexity <= 0L)) {
               # Only identity transformations have complexity 0L, so this is the raw .data record.
@@ -256,12 +257,12 @@ regressoR.applyLearners <- function(x, y,
     return(.s);
   };
 
-  return(learnerSelectoR::learning.learn(data = .data,
-                                         data.size = .data.size,
-                                         learners = learners,
-                                         test.quality = .test.quality,
-                                         selector = .selector,
-                                         representations = representations,
-                                         test.selector = .test.selector,
-                                         q = q));
+  return(learning.learn(data = .data,
+                        data.size = .data.size,
+                        learners = learners,
+                        test.quality = .test.quality,
+                        selector = .selector,
+                        representations = representations,
+                        test.selector = .test.selector,
+                        q = q));
 }
