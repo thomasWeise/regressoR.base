@@ -1,7 +1,7 @@
 Package: regressoR.base
 Type: Package
 Title: An R Package with Shared Utilities for Regression 
-Version: 0.8.6
+Version: 0.8.7
 Author: Dr. Thomas Weise <tweise@hfuu.edu.cn>
 Maintainer: Dr. Thomas Weise <tweise@hfuu.edu.cn>
 Description: A package with classes and utilities shared by all
