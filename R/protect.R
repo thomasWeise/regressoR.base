@@ -54,84 +54,54 @@ model.protect <- function(f, x, y) {
   f <- force(f);
 
   # create a new, wrapped/protected model
-  f.ret <- function(x) {
-    # first compute the original model
-    res <- f(x);
+  fix <- function(x) {
+    y   <- vector(mode="double", length=length(x));
 
-    # if the original result is finite, we use it directly
-    if(is.finite(res)) { return(res); }
-
-    if(x <= x.min) {
-      # we are before the start.
-      # let us see how far we can go there coming from x.min
-      res <- find.finite(x, x.min, f)[2L];
-      if(is.finite(res)) {
-        # ok, we could make some progress, so we use the approximation
-        return(res);
+    # fix lower bound
+    sel <- (x <= x.min);
+    remaining <- !sel;
+    if(any(sel)) {
+      end <- find.finite(min(x[sel]), x.min, f);
+      sel2 <- sel & (x <= end[1L]);
+      y[sel2] <- end[2L];
+      sel <- sel & (!sel2);
+      if(any(sel)) {
+        y[sel] <- vapply(X=x[sel], FUN=function(x) find.finite(x, x.min, f)[2L], FUN.VALUE=NaN);
+        sel[sel] <- sel[sel] & (!(is.finite(y[sel])));
+        y[sel] <- x.min.y;
       }
-
-      # if we are before the start and cannot extrapolate at all, we use the
-      # initial value as best guess
-      return(x.min.y);
     }
 
-    if(x >= x.max) {
-      # we are after the end
-      # let us see how far we can go there coming from x.max
-      res <- find.finite(x, x.max, f)[2L];
-      if(is.finite(res)) {
-        # ok, we could make some progress, so we use the approximation
-        return(res);
+    # fix upperbound
+    sel <- remaining & (x >= x.max);
+    remaining <- (remaining & (!sel));
+    if(any(sel)) {
+      end <- find.finite(max(x[sel]), x.max, f);
+      sel2 <- sel & (x >= end[1L]);
+      y[sel2] <- end[2L];
+      sel <- sel & (!sel2);
+      if(any(sel)) {
+        y[sel] <- vapply(X=x[sel], FUN=function(x) find.finite(x, x.max, f)[2L], FUN.VALUE=NaN);
+        sel[sel] <- sel[sel] & (!(is.finite(y[sel])));
+        y[sel] <- x.max.y;
       }
-
-      # if we are after the end and cannot extrapolate at all, we use the last
-      # recorded value as best guess
-      return(x.max.y);
     }
 
-    # we are somewhere between x.min and x.max
-    # so we try to approach the dangerous value from both ends
-
-    # first from the left end
-    res.1 <- find.finite(x, x.min, f);
-    if(is.finite(res.1[2L])){
-      # if we could make some progress on the left side, we use the
-      # extrapolation
-      x.1 <- res.1[1L];
-      y.1 <- res.1[2L];
-    } else {
-      # if not, we use the first recorded valid value
-      x.1 <- x.min;
-      y.1 <- x.min.y;
-    }
-
-    # now we do the same coming from the right
-    res.2 <- find.finite(x, x.max, f);
-    if(is.finite(res.2[2L])){
-      # ok, we could make some approximation and can use it
-      x.2 <- res.2[1L];
-      y.2 <- res.2[2L];
-    } else {
-      # otherwise, use last recorded value
-      x.2 <- x.max;
-      y.2 <- x.max.y;
-    }
-
-    # finally, we try to linearly extrapolate the result
-    res <- (y.1 + ((y.2 - y.1) * (x - x.1) / (x.2 - x.1)));
-    if(is.finite(res)) { return(res); }
-
-    # otherwise, we are somewhere between x.min and x.max and things are totally
-    # dodgy.
-    # in this case, we just linearly extrapolate to get a finite result
-    return(x.min.y + ((x.max.y - x.min.y) * (x - x.min) / (x.max - x.min)));
+    # linearly extrapolate everything in beteween
+    y[remaining] <- (x.min.y + ((x.max.y - x.min.y) * (x[remaining] - x.min) / (x.max - x.min)));
+    return(y);
   }
-  f.ret <- force(f.ret);
+  fix <- force(fix);
+  x <- NULL; y <- NULL;
 
   # finally, we vectorize the function properly
   final <- function(x) {
-    if(length(x) == 1L) f.ret(x)
-    else vapply(X=x, FUN=f.ret, FUN.VALUE = NaN);
+    y <- f(x);
+    finite <- is.finite(y);
+    if(all(finite)) { return(y); }
+    finite <- !finite;
+    y[finite] <- fix(x[finite]);
+    return(y);
   }
 
   final <- force(final);

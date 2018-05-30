@@ -2,7 +2,7 @@ library("regressoR.base")
 context("model.protect")
 
 test_that("Test model.protect 1",{
-  f <- function(x) {
+  f.raw <- function(x) {
     if(x < -5) { NaN }
     else {
       if(x > 5) { +Inf; }
@@ -12,6 +12,7 @@ test_that("Test model.protect 1",{
       }
     }
   };
+  f <- function(x) vapply(X=x, FUN=f.raw, FUN.VALUE=NaN);
 
   x <- -5:5;
   y <- vapply(X=x, FUN=f, FUN.VALUE = -Inf);
@@ -30,7 +31,7 @@ test_that("Test model.protect 1",{
 })
 
 test_that("Test model.protect 2",{
-  f <- function(x) {
+  f.raw <- function(x) {
     if(x < -5) { NaN }
     else {
       if(x > 5) { +Inf; }
@@ -40,6 +41,8 @@ test_that("Test model.protect 2",{
       }
     }
   };
+  f <- function(x) vapply(X=x, FUN=f.raw, FUN.VALUE=NaN);
+
 
   x <- -5:5;
   y <- vapply(X=x, FUN=f, FUN.VALUE = -Inf);
@@ -53,3 +56,23 @@ test_that("Test model.protect 2",{
   expect_identical(f.p(x.2), y.2);
 })
 
+
+test_that("Test model.protect 3",{
+  f.raw <- function(x) {
+    if(x < -5) { NaN }
+    else {
+      if(x > 5) { +Inf; }
+      else { (x - 3) * 7 }
+    }
+  };
+  f <- function(x) vapply(X=x, FUN=f.raw, FUN.VALUE=NaN);
+
+  x <- runif(n=1000, min=-10, max=10);
+  y <- f(x);
+
+  xx <- x[is.finite(y)];
+  yy <- y[is.finite(y)];
+
+  f.p <- model.protect(f, xx, yy);
+  expect_true(all(is.finite(f.p(x))));
+})
