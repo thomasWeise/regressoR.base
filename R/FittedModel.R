@@ -7,6 +7,7 @@
 #'   quality metric, smaller values are better
 #' @exportClass FittedModel
 #' @importFrom methods setClass representation
+#' @importFrom utilizeR function.args
 #' @importClassesFrom learnerSelectoR learning.Result
 FittedModel <- setClass(
   Class = "FittedModel",
@@ -16,12 +17,7 @@ FittedModel <- setClass(
     if(is.null(object@f) || (!(is.function(object@f)))) {
       return("The model must be a proper non-null function.");
     }
-    if(is.primitive(object@f)) {
-      f.args <- formals(args(object@f));
-    } else {
-      f.args <- formals(object@f);
-    }
-    if ((length(f.args) != 1L) || (!(identical(names(f.args), c("x"))))) {
+    if (!(identical(function.args(object@f), c("x")))) {
       return("Model function must take exactly one arguments named 'x'.");
     }
     return(TRUE);
