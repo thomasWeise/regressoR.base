@@ -2,6 +2,7 @@
 
 # The internal method to check a learner and to wrap it so that it can deal with
 # the internal data structures.
+#' @importFrom utilizeR function.args
 .prepare.learner <- function(learner) {
   # check the learner
   learner <- force(learner);
@@ -9,16 +10,11 @@
     stop("A learner must be a valid function.");
   }
   # make sure the learner is a proper function
-  if(is.primitive(learner)) {
-    learner.args <- formals(args(learner));
-  } else {
-    learner.args <- formals(learner);
-  }
-  if(!(identical(names(learner.args), c("metric",
-                                        "transformation.x",
-                                        "transformation.y",
-                                        "metric.transformed",
-                                        "q")))) {
+  if(!(identical(function.args(learner), c("metric",
+                                           "transformation.x",
+                                           "transformation.y",
+                                           "metric.transformed",
+                                           "q")))) {
     stop("Learner function must have exactly five arguments named 'metric', 'transformation.x', 'transformation.y', 'metric.transformed', and 'q'.");
   }
 
@@ -129,6 +125,7 @@
 #' @importFrom regressoR.quality RegressionQualityMetric.default
 #' @importFrom learnerSelectoR learning.learn
 #' @importFrom methods is
+#' @importFrom utilizeR function.args
 #' @export regressoR.applyLearners
 regressoR.applyLearners <- function(x, y,
                                     learners,
@@ -150,13 +147,8 @@ regressoR.applyLearners <- function(x, y,
   if(is.null(metricGenerator) || (!(is.function(metricGenerator)))) {
     stop("metricGenerator must be a function.");
   }
-  # make sure the learner is a proper function
-  if(is.primitive(metricGenerator)) {
-    metricGenerator.args <- formals(args(metricGenerator));
-  } else {
-    metricGenerator.args <- formals(metricGenerator);
-  }
-  if(!(identical(names(metricGenerator.args), c("x", "y")))) {
+  # make sure the metric generator has the right arguments
+  if(!(identical(function.args(metricGenerator), c("x", "y")))) {
     stop("metricGenerator must be a function with exactly two arguments, 'x' and 'y'.")
   }
 

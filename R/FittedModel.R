@@ -53,9 +53,9 @@ FittedModel.new <- function(f, quality, size) {
 #' @description well, convert a \code{FittedModel} to a String
 #' @param x the \code{FittedModel}
 #' @return the string
-#' @importFrom utilizeR functionToString
+#' @importFrom utilizeR function.toString
 #' @export FittedModel.as.character
-FittedModel.as.character <- function(x) functionToString(x@f)
+FittedModel.as.character <- function(x) function.toString(x@f)
 
 #' @title Convert a \code{\link{FittedModel}} to a String
 #' @description the \code{as.character} implementation for
